@@ -1,27 +1,40 @@
 import '../css/style.css'
-import { Actor, Engine, Vector, DisplayMode } from "excalibur"
+import { Actor, Engine, Vector, DisplayMode, Label, FontUnit, Font, SolverStrategy } from "excalibur"
 import { Resources, ResourceLoader } from './resources.js'
+import { Dog } from './dog.js'
+import { Character } from './character.js'
+import { StartingScreen } from './startingscreen'
+import { Level1} from './level1'
+import { GameOver } from './gameover.js'
+import { YouWon } from './youwon.js'
 
 export class Game extends Engine {
 
     constructor() {
-        super({ 
+        super({
             width: 1280,
             height: 720,
             maxFps: 60,
-            displayMode: DisplayMode.FitScreen
-         })
+            displayMode: DisplayMode.FitScreen,
+            physics: {
+                solver: SolverStrategy.Realistic,
+                gravity: new Vector(0, 800),
+            }
+        })
         this.start(ResourceLoader).then(() => this.startGame())
     }
 
     startGame() {
-        console.log("start de game!")
-        const fish = new Actor()
-        fish.graphics.use(Resources.Fish.toSprite())
-        fish.pos = new Vector(400, 300)
-        fish.vel = new Vector(-10,0)
-        this.add(fish)
+        this.add('level1', new Level1())
+        this.add('gameover', new GameOver())
+        this.add('startingscreen', new StartingScreen())
+        this.add('youwon', new YouWon())
+        console.log("created the three scenes")
+        this.goToScene('startingscreen')
     }
 }
+
+
+
 
 new Game()
